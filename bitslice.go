@@ -45,3 +45,15 @@ func (b *Bits) Get(offset int) (bool, error) {
 	bit := uint64(1 << (uint64(offset) % 64))
 	return (b.data[x] & bit) != 0, nil
 }
+
+// SetGet sets the bit at the given offset, and returns true if it was already set
+func (b *Bits) SetGet(offset int) (bool, error) {
+	x := uint64(offset) / 64
+	if x >= uint64(len(b.data)) {
+		return false, fmt.Errorf("out of range: %d is greater than length %d", offset, len(b.data)*64)
+	}
+	bit := uint64(1 << (uint64(offset) % 64))
+	set := (b.data[x] & bit) != 0
+	b.data[x] |= bit
+	return set, nil
+}
