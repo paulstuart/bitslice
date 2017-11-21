@@ -105,3 +105,41 @@ func TestSetGet(t *testing.T) {
 		}
 	}
 }
+
+func TestClear(t *testing.T) {
+	const max = 32 * 1024
+	fib := []int{
+		0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657,
+	}
+	lookup := make(map[int]struct{})
+	for _, x := range fib {
+		lookup[x] = struct{}{}
+	}
+	s := NewBits(max)
+
+	// set all bits true
+	for bit := 0; bit < max; bit++ {
+		if err := s.Set(bit); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	// clear the fibonacci series
+	for _, bit := range fib {
+		if err := s.Clear(bit); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	// are the right ones cleared?
+	for bit := 0; bit < max; bit++ {
+		set, err := s.Get(bit)
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, ok := lookup[bit]
+		if set == ok {
+			t.Errorf("offset %d should be clear, but isn't\n", bit)
+		}
+	}
+}

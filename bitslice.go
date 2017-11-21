@@ -32,7 +32,7 @@ func (b *Bits) Clear(offset int) error {
 		return fmt.Errorf("out of range: %d is greater than length %d", offset, len(b.data)*64)
 	}
 	bit := uint64(1 << (uint64(offset) % 64))
-	b.data[x] |= ^bit
+	b.data[x] &= ^bit
 	return nil
 }
 
